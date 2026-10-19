@@ -1,0 +1,31 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local audit outputs and temporary workspaces
+audit-reports/
+reports/
+iot-audit-reports/
+*.log
+
+# Firmware samples can contain proprietary or sensitive data
+firmware/*
+!firmware/.gitkeep
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
