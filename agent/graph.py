@@ -15,6 +15,12 @@ def _next(state: FirmwareAuditState) -> str:
     return "stop" if state.status == "FAILED" else "continue"
 
 
+def _after_ingest(state: FirmwareAuditState) -> str:
+    if state.status == "FAILED":
+        return "stop"
+    return {"elf": "audit", "binary": "audit", "directory": "triage", "firmware": "unpack"}[state.input_type]
+
+
 workflow = StateGraph(FirmwareAuditState)
 workflow.add_node("ingest", ingest_node)
 workflow.add_node("unpack", unpack_node)
@@ -23,7 +29,10 @@ workflow.add_node("supervisor", supervisor_node)
 workflow.add_node("audit", audit_node)
 workflow.add_node("report", report_node)
 workflow.add_edge(START, "ingest")
-workflow.add_conditional_edges("ingest", _next, {"continue": "unpack", "stop": END})
+workflow.add_conditional_edges(
+    "ingest", _after_ingest,
+    {"audit": "audit", "triage": "triage", "unpack": "unpack", "stop": END},
+)
 workflow.add_conditional_edges("unpack", _next, {"continue": "triage", "stop": END})
 workflow.add_conditional_edges("triage", _next, {"continue": "supervisor", "stop": END})
 workflow.add_conditional_edges("supervisor", _next, {"continue": "audit", "stop": END})

@@ -1,7 +1,6 @@
 """Recursive extraction with tool fallbacks."""
 
 from pathlib import Path
-import shutil
 import tempfile
 
 from agent.states import FirmwareAuditState
@@ -32,12 +31,6 @@ def unpack_node(state: FirmwareAuditState) -> dict:
             fallback = SasquatchTool().extract(firmware, fallback_dir)
         logs.append(f"fallback return code: {fallback.return_code}")
     if not any(path.is_file() for path in extract_dir.rglob("*")):
-        if firmware.read_bytes()[:4] == b"\x7fELF":
-            shutil.copy2(firmware, extract_dir / firmware.name)
-            return {
-                "status": "UNPACKED", "extract_dir": str(extract_dir),
-                "logs": logs + ["input is an ELF binary; direct audit mode enabled"],
-            }
         recovery = recover(state, "UnpackAgent", "no files were extracted")
         recovery.update({"extract_dir": str(extract_dir), "logs": logs})
         return recovery

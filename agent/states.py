@@ -46,6 +46,8 @@ class AgentDecision(StrictModel):
 
 class FirmwareAuditState(StrictModel):
     task_id: str
+    requested_input_type: Literal["auto", "binary", "firmware", "directory"] = "auto"
+    input_type: Literal["firmware", "elf", "binary", "directory"] = "firmware"
     firmware_meta: Optional[FirmwareMeta] = None
     extract_dir: Optional[str] = None
     report_path: Optional[str] = None
