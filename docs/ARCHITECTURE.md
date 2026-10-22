@@ -32,12 +32,38 @@ The LLM is responsible for intent interpretation, planning, routing, explanation
 | `TriageAgent` | Discover services, scripts, binaries, credentials, and attack surface |
 | `StaticAnalysisAgent` | Run Ghidra and future binary analysis backends |
 | `SecretScanAgent` | Detect credentials, keys, certificates, tokens, and debug artifacts |
-| `VulnerabilityAgent` | Correlate evidence and assess vulnerability patterns and severity |
+| `VulnerabilityAnalysisAgent` | Discover candidates, correlate static evidence, trace data flows, and assess findings within the current binary or firmware |
 | `RecoveryAgent` | Diagnose failures and propose retry, fallback, or user action |
 | `EvidenceAgent` | Persist commands, logs, hashes, locations, and call traces |
 | `ReportAgent` | Produce structured JSON and future HTML/SARIF reports |
 
 The current implementation contains the supervisor and recovery prototypes. Intake, unpack, triage, audit, and report are implemented as LangGraph worker nodes and will be migrated to independent agents in later phases.
+
+## Vulnerability analysis boundary
+
+Detection and assessment are combined in `VulnerabilityAnalysisAgent`. The first implementation focuses on evidence that can be confirmed within the current binary or firmware image: files, functions, callers, input sources, data-flow edges, configuration, IPC, and dangerous sinks. Product-wide impact, affected-version analysis, and external deployment scope are outside the first implementation.
+
+The agent must distinguish `confirmed`, `probable`, `suspected`, `not_vulnerable`, and `insufficient_evidence`. It must never turn a dangerous API reference into a confirmed vulnerability without an evidence chain.
+
+Dynamic analysis is a later validation stage. It may use QEMU, an emulator, a containerized runtime, or authorized hardware to execute a trigger and collect runtime evidence. Static analysis must remain useful when no dynamic environment is available.
+
+## Cross-file and cross-process analysis target
+
+Vulnerability analysis must be able to expand beyond the initially selected binary. When a network-facing service calls a shared library function, the analysis should follow that dependency. When a backend reads a value through NVRAM helpers, the analysis should search for writers and external sources. The same chain should cover frontend requests, CGI handlers, Unix or TCP sockets, environment variables, temporary files, and other IPC boundaries.
+
+The target data-flow record is:
+
+```text
+source file / function / input
+        ↓
+transport or shared state
+        ↓
+intermediate files, processes, libraries, and functions
+        ↓
+sink file / function / security effect
+```
+
+Each edge must record its evidence location and confidence, and distinguish observed relationships from LLM hypotheses. A chain that crosses multiple files must list the ordered file and function sequence. If analysis of one component fails, the chain remains partial and the report records the exact break point.
 
 ## Communication protocol
 
@@ -78,10 +104,12 @@ Terminal states are `COMPLETED`, `FAILED`, and `CANCELLED`. Each agent has its o
 ## Development phases
 
 1. Stabilize the interactive runtime, task state, events, and typed contracts.
-2. Implement natural-language intent parsing and structured supervisor-to-agent dispatch.
-3. Add evidence-driven secret scanning and vulnerability confirmation.
-4. Add persistence, parallel analysis, resumable tasks, API access, and additional report formats.
-5. Add independent model and provider configuration for each agent.
+2. Improve the primary audit flow: candidate discovery, structured static evidence, `VulnerabilityAnalysisAgent`, cross-file data-flow analysis, multi-target auditing, and evidence-based reports.
+3. Implement natural-language intent parsing and structured supervisor-to-agent dispatch.
+4. Add dynamic analysis and trigger validation backends.
+5. Add the independent `AngrExplorationAgent` flow. It reads a vulnerability task JSON/YAML, performs path validation and symbolic value solving, and does not receive or unpack firmware.
+6. Add persistence, parallel analysis, resumable tasks, API access, and additional report formats.
+7. Add independent model and provider configuration for each agent.
 
 ## Release strategy
 

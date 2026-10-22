@@ -36,6 +36,17 @@ def readable_report(state: FirmwareAuditState, generated_at: str) -> str:
                   "| --- | --- | --- | --- | --- |"])
     for index, finding in enumerate(state.findings, 1):
         lines.append(f"| {index} | {_text(finding.function_name)} | {finding.vulnerable_pattern} | {finding.severity} | {_text(', '.join(finding.call_trace))} |")
+    lines.extend(["", "## Ghidra 静态证据", ""])
+    if state.static_evidence:
+        for item in state.static_evidence:
+            lines.append(
+                f"- `{_text(item.sink_function)}@{_text(item.sink_address)}` "
+                f"调用者：{_text(', '.join(item.callers) or '未发现')}；"
+                f"调用位置：{_text(', '.join(item.call_sites) or '未发现')}；"
+                f"输入 API 线索：{_text(', '.join(item.input_sources) or '未发现')}"
+            )
+    else:
+        lines.append("没有解析到结构化 Ghidra 证据。")
     lines.extend(["", "## 工具与异常记录", "",
                   "当前仅保留部分节点日志，尚无完整工具执行证据；无法据此确认全部工具成功。", ""])
     for entry in [*state.logs, *state.llm_diagnostics]:

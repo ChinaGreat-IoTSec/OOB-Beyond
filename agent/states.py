@@ -35,6 +35,17 @@ class AuditFinding(StrictModel):
     ]
     call_trace: List[str] = Field(default_factory=list)
     severity: Literal["info", "low", "medium", "high", "critical"]
+    evidence_refs: List[str] = Field(default_factory=list)
+
+
+class StaticEvidence(StrictModel):
+    target_binary: str
+    sink_function: str
+    sink_address: str
+    callers: List[str] = Field(default_factory=list)
+    call_sites: List[str] = Field(default_factory=list)
+    input_sources: List[str] = Field(default_factory=list)
+    evidence_source: Literal["ghidra"] = "ghidra"
 
 
 class AgentDecision(StrictModel):
@@ -54,6 +65,7 @@ class FirmwareAuditState(StrictModel):
     binary_targets: List[BinaryTarget] = Field(default_factory=list)
     selected_target: Optional[BinaryTarget] = None
     findings: List[AuditFinding] = Field(default_factory=list)
+    static_evidence: List[StaticEvidence] = Field(default_factory=list)
     status: Literal[
         "INITIALIZED", "INGESTED", "UNPACKED", "TRIAGED", "AUDITED", "FAILED"
     ] = "INITIALIZED"

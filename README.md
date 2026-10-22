@@ -20,11 +20,13 @@ OOB Beyond（无界）是由 [OOB IoT Sec Labs](https://oobsec.cn) 开发的交�
 - 输入已识别的二进制时直接审计指定文件；目录输入直接进入候选筛选
 - 交互式审计会话和一次性命令行调用
 - SupervisorAgent 使用 LLM 选择优先审计目标
+- 候选目标优先用唯一 ID 匹配，并兼容原路径、规范化路径和唯一后缀；歧义或无效选择请求模型纠正一次，仍无法确定时按规则排序兜底，报告明确注明依据，不沿用模型原理由。模型连接错误仍明确报错。
 - Intake、Unpack、Triage、Audit、Report 等专业工作节点
 - RecoveryAgent 负责工具错误和异常诊断
 - 支持 Binwalk、SquashFS 工具和 Ghidra Headless
 - 发现 Web 服务、CGI、启动服务和网络 API 线索
 - 输出 Markdown 阅读报告和结构化 JSON 数据
+- Ghidra 输出 Sink 地址、调用者、调用位置和输入 API 线索
 - 支持 OpenAI 兼容 API 和可配置推理级别
 
 ## 快速开始
