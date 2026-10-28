@@ -36,6 +36,20 @@ class AuditFinding(StrictModel):
     call_trace: List[str] = Field(default_factory=list)
     severity: Literal["info", "low", "medium", "high", "critical"]
     evidence_refs: List[str] = Field(default_factory=list)
+    conclusion: Literal["lead", "suspected", "not_vulnerable", "insufficient_evidence"] = "lead"
+    rationale: str = ""
+    evidence_gaps: List[str] = Field(default_factory=list)
+    scope: str = ""
+
+
+class ArgumentEvidence(StrictModel):
+    index: int = Field(ge=0)
+    constant: Optional[int] = Field(default=None, ge=0)
+    string_length: Optional[int] = Field(default=None, ge=0)
+    capacity: Optional[int] = Field(default=None, gt=0)
+    storage: Literal["stack", "other", "unknown"] = "unknown"
+    source: Optional[str] = None
+    basis: str = ""
 
 
 class StaticEvidence(StrictModel):
@@ -46,6 +60,8 @@ class StaticEvidence(StrictModel):
     call_sites: List[str] = Field(default_factory=list)
     input_sources: List[str] = Field(default_factory=list)
     evidence_source: Literal["ghidra"] = "ghidra"
+    arguments: List[ArgumentEvidence] = Field(default_factory=list)
+    analysis_gaps: List[str] = Field(default_factory=list)
 
 
 class AgentDecision(StrictModel):

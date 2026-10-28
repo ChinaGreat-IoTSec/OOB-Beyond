@@ -11,7 +11,7 @@ class SasquatchTool(BaseAuditTool):
         return "sasquatch"
 
     def extract(self, image: Path, output_dir: Path) -> ToolResult:
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.parent.mkdir(parents=True, exist_ok=True)
         return self.execute(["-d", str(output_dir), str(image)])
 
 
@@ -21,7 +21,7 @@ class UnsquashfsTool(BaseAuditTool):
         return "unsquashfs"
 
     def extract(self, image: Path, output_dir: Path) -> ToolResult:
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_dir.parent.mkdir(parents=True, exist_ok=True)
         return self.execute(["-d", str(output_dir), str(image)])
 
 

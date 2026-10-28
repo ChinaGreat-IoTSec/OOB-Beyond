@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "kind": "adapter",
+  "id": "example-local-adapter",
+  "input_sha256": "REPLACE_WITH_INPUT_SHA256",
+  "requirements": {
+    "architecture": "mips", "endianness": "big", "bits": 32,
+    "abi": "o32", "machine": "malta", "control": "linux-serial-ssh-v1"
+  },
+  "vendor_disk": {"path": "../assets/vendor.ext2", "sha256": "REPLACE_WITH_DISK_SHA256"},
+  "startup_script": {"path": "start.sh", "sha256": "REPLACE_WITH_SCRIPT_SHA256"},
+  "network": {"local_ip": "10.0.2.15", "tap_ip": "192.168.100.2", "prefix": 24},
+  "http_probe": null,
+  "https_port": null,
+  "limitations": ["Replace this template with a verified adapter; startup must fail if its service checks fail"]
+}

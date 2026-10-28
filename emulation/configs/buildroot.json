@@ -1,0 +1,13 @@
+{
+  "version": "2025.02.19",
+  "release_series": "2025.02 LTS",
+  "source_url": "https://buildroot.org/downloads/buildroot-2025.02.19.tar.xz",
+  "signature_url": "https://buildroot.org/downloads/buildroot-2025.02.19.tar.xz.sign",
+  "sha256": "e5e58bff1da91f022f60cefdfe280140c08023cd0aeec1e5f6f9da0ea866d69c",
+  "signer_fingerprint": "18C7DF2819C1733D822D599EA500D6EE9CB0E540",
+  "key_url": "https://gitlab.com/-/snippets/4836881/raw/main/arnout@rnout.be.asc",
+  "signature_note": "Clear-signed checksum list; verify signature then compare archive SHA256. Key fetched from release-specified URL; no independent identity certification.",
+  "candidate_defconfig": "qemu_mips32r2_malta_defconfig",
+  "baseline_status": "local_assets_not_distributed",
+  "automatic_build": false
+}

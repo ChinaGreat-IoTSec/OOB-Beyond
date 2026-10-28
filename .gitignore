@@ -24,6 +24,18 @@ iot-audit-reports/
 firmware/*
 !firmware/.gitkeep
 
+# Local evaluation artifacts and private annotations
+samples/local/
+
+# Local emulation assets; publish only configs and scripts
+/emulation/sources/
+/emulation/downloads/
+/emulation/output/
+/emulation/images/
+/emulation/rootfs/
+/emulation/runs/
+/emulation/local/
+
 # IDE and OS files
 .idea/
 .vscode/

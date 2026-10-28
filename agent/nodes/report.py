@@ -36,6 +36,14 @@ def readable_report(state: FirmwareAuditState, generated_at: str) -> str:
                   "| --- | --- | --- | --- | --- |"])
     for index, finding in enumerate(state.findings, 1):
         lines.append(f"| {index} | {_text(finding.function_name)} | {finding.vulnerable_pattern} | {finding.severity} | {_text(', '.join(finding.call_trace))} |")
+    lines.extend(["", "## 漏洞分析结论", ""])
+    for index, finding in enumerate(state.findings, 1):
+        lines.extend([
+            f"### {index}. {_text(finding.function_name)} — {finding.conclusion}", "",
+            f"- 分析依据：{_text(finding.rationale)}",
+            f"- 范围：{_text(finding.scope)}",
+            f"- 证据缺口：{_text('; '.join(finding.evidence_gaps) or '未记录')}",
+        ])
     lines.extend(["", "## Ghidra 静态证据", ""])
     if state.static_evidence:
         for item in state.static_evidence:

@@ -53,6 +53,7 @@ class BaseAuditTool(ABC):
                 env=merged_env,
                 capture_output=True,
                 text=True,
+                errors="replace",
                 timeout=self.timeout,
                 check=False,
             )
@@ -66,8 +67,8 @@ class BaseAuditTool(ABC):
             return ToolResult(
                 command=command,
                 return_code=None,
-                stdout=exc.stdout or "",
-                stderr=exc.stderr or "",
+                stdout=exc.stdout.decode(errors="replace") if isinstance(exc.stdout, bytes) else exc.stdout or "",
+                stderr=exc.stderr.decode(errors="replace") if isinstance(exc.stderr, bytes) else exc.stderr or "",
                 timed_out=True,
                 error=f"command timed out after {self.timeout}s",
             )

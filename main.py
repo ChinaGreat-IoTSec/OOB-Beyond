@@ -2,10 +2,14 @@
 
 import argparse
 from datetime import datetime
-import os
 from pathlib import Path
 import re
 import uuid
+import sys
+
+if __name__ == "__main__" and len(sys.argv) > 1 and sys.argv[1] == "emulate":
+    from emulation.session import main as emulate_main
+    raise SystemExit(emulate_main(sys.argv[2:]))
 
 from rich.console import Console
 
@@ -14,19 +18,8 @@ from agent.states import FirmwareAuditState, FirmwareMeta
 
 
 def _load_env_file() -> None:
-    env_file = Path(".env")
-    if not env_file.is_file():
-        return
-    for line in env_file.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):
-            continue
-        if line.startswith("export "):
-            line = line[7:].lstrip()
-        key, separator, value = line.partition("=")
-        key = key.strip()
-        if separator and key and key not in os.environ:
-            os.environ[key] = value.strip().strip('"').strip("'")
+    from agent.llm import load_env_file
+    load_env_file(Path(".env"))
 
 
 def run_audit(source: Path, console: Console, input_type: str = "auto") -> int:

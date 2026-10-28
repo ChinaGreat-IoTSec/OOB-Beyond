@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "kind": "environment",
+  "id": "example-mips32-be-environment",
+  "requirements": {
+    "architecture": "mips", "endianness": "big", "bits": 32,
+    "abi": "o32", "machine": "malta", "control": "linux-serial-ssh-v1"
+  },
+  "kernel": {"path": "../assets/vmlinux", "sha256": "REPLACE_WITH_KERNEL_SHA256"},
+  "system_disk": {"path": "../assets/rootfs.ext2", "sha256": "REPLACE_WITH_DISK_SHA256"}
+}
